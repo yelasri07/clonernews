@@ -22,15 +22,30 @@ async function getMaxIdAfterLoaded() {
         }
         const maxId = await response.json();
         id = maxId
-        loadData(20)
+        loadData(50)
     } catch (error) {
         console.error('Error fetching max ID:', error);
     }
 }
 
-setInterval(() => {
-    getMaxId()
-}, 5000)
+
+function throttle(func, delay) {
+    let full = false
+    return function (...args) {
+        if (!full) {
+            func(...args)
+            full = true
+            setTimeout(() => {
+                full = false
+            }, delay)
+        }
+    }
+}
+
+const throttledGetMaxId = throttle(getMaxId, 5000);
+
+setInterval(throttledGetMaxId , 300)
+
 
 async function getMaxId() {
     try {
