@@ -20,7 +20,7 @@ async function getMaxIdAfterLoaded() {
     try {
         const response = await fetch(urlMaxItem);
         if (!response.ok) {
-            throw new Error(`Response status: ${response.status}`);
+            throw `Response status: ${response.status}`;
         }
         const maxId = await response.json();
         id = maxId
@@ -90,7 +90,7 @@ async function loadData(nbOfCards) {
         try {
             const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
             if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
+                throw `Response status: ${response.status}`;
             }
 
             const data = await response.json();
@@ -144,7 +144,7 @@ function getPostInfos(idPost) {
     fetch(`https://hacker-news.firebaseio.com/v0/item/${idPost}.json`)
         .then(response => {
             if (!response.ok) {
-                throw new Error(`Response status: ${response.status}`);
+                throw `Response status: ${response.status}`;
             }
 
             return response.json()
@@ -194,7 +194,7 @@ function getPollsData(idPoll) {
         fetch(`https://hacker-news.firebaseio.com/v0/item/${options}.json`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
+                    throw `Response status: ${response.status}`;
                 }
 
                 return response.json()
@@ -219,7 +219,7 @@ function getComments(idsComment) {
         fetch(`https://hacker-news.firebaseio.com/v0/item/${comment}.json`)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
+                    throw `Response status: ${response.status}`;
                 }
 
                 return response.json()
