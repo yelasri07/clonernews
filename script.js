@@ -3,7 +3,7 @@ const content = document.getElementById('content')
 const notifDiv = document.getElementById('notifDiv')
 const urlMaxItem = 'https://hacker-news.firebaseio.com/v0/maxitem.json?print=pretty'
 let dataIds = []
-let scrollFetchData = 1500
+let scrollFetchData = 500
 let id = 0
 ////////////////////////
 document.addEventListener("DOMContentLoaded", () => {
@@ -49,8 +49,8 @@ async function getMaxId() {
 
 function fetchDataScroll() {
     if (scrollY > scrollFetchData) {
-        scrollFetchData = scrollY + 1000;
-        loadData(10);
+        scrollFetchData = scrollY + 700;
+        loadData(30);
     }
 }
 
@@ -64,34 +64,35 @@ function Debounce(func, delay) {
     }
 }
 
-function loadData(nbOfCards) {
+async function loadData(nbOfCards) {
     for (let i = 0; i < nbOfCards; i++) {
-        fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error(`Response status: ${response.status}`);
-                }
+        try {
+            const response = await fetch(`https://hacker-news.firebaseio.com/v0/item/${id}.json`);
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
 
-                return response.json()
-            })
-            .then(data => {
-                let status = data.type === 'story' || data.type === 'poll' || data.type === 'job'
-                if (data.type === "comment" || (status && data.dead) || data.title === undefined || (status && data.deleted) ||
-                    dataIds.includes(data.ids)) {
-                    id--
-                    loadData(1)
-                    return
-                }
-                id--
-                dataIds.push(data.id)
-                content.append(createCards(data))
-            }).catch((error) => {
-                console.log(Error('error fetch data ', + error, "in :", id));
-            })
+            const data = await response.json();
+            let status = data.type === 'story' || data.type === 'poll' || data.type === 'job';
+
+            id--;
+
+            if (data.type === "comment" || (status && data.dead) || data.title === undefined ||
+                (status && data.deleted) || dataIds.includes(data.id)) {
+                i--;
+                continue;
+            }
+
+            // console.log(data.id);
+            dataIds.push(data.id);
+            content.append(createCards(data));
+        } catch (error) {
+            console.log(Error('error fetch data ', + error, "in :", id));
+            id--;
+            i--;
+        }
     }
-    id--
 }
-
 function createCards(data) {
     const div = document.createElement('div')
     div.className = 'card'
