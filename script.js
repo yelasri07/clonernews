@@ -32,20 +32,25 @@ async function getMaxIdAfterLoaded() {
 
 
 // this is the throttle function for the requests sent to the api
-function throttle(func, delay) {
+function throttle(func, delay, obj = {}) {
     let full = false
     return function (...args) {
-        if (!full) {
+      if (!full) { 
+        if (obj.leading) {
             func(...args)
-            full = true
-            setTimeout(() => {
-                full = false
-            }, delay)
         }
+        full =true
+        setTimeout(() => {
+            if (!obj.leading) {
+                func(...args)
+            }
+            full = false
+        }, delay)
+    }
     }
 }
 
-const throttledGetMaxId = throttle(getMaxId, 5000);
+const throttledGetMaxId = throttle(getMaxId, 5000,{trailing:true, leading:false});
 
 setInterval(throttledGetMaxId , 300)
 
