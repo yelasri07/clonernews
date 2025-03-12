@@ -5,7 +5,8 @@ const urlMaxItem = 'https://hacker-news.firebaseio.com/v0/maxitem.json?print=pre
 let dataIds = []
 let scrollFetchData = 500
 let id = 0
-////////////////////////
+
+// after reloading the page this function call the functions we need
 document.addEventListener("DOMContentLoaded", () => {
     getMaxIdAfterLoaded()
     let fetchDataScrollDebounce = Debounce(fetchDataScroll, 1000)
@@ -14,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
+// this function gets the max id from the urlMaxItem 'API'
 async function getMaxIdAfterLoaded() {
     try {
         const response = await fetch(urlMaxItem);
@@ -29,6 +31,7 @@ async function getMaxIdAfterLoaded() {
 }
 
 
+// this is the throttle function for the requests sent to the api
 function throttle(func, delay) {
     let full = false
     return function (...args) {
@@ -46,7 +49,7 @@ const throttledGetMaxId = throttle(getMaxId, 5000);
 
 setInterval(throttledGetMaxId , 300)
 
-
+// this function we need it for the throttle function to check the max ID
 async function getMaxId() {
     try {
         const response = await fetch(urlMaxItem);
@@ -62,6 +65,7 @@ async function getMaxId() {
     }
 }
 
+// this function handles the scrolling to load more data
 function fetchDataScroll() {
     if (scrollY > scrollFetchData) {
         scrollFetchData = scrollY + 700;
@@ -69,6 +73,7 @@ function fetchDataScroll() {
     }
 }
 
+// this is the debounce function that we need for the scroll
 function Debounce(func, delay) {
     let timer
     return (...args) => {
@@ -79,6 +84,7 @@ function Debounce(func, delay) {
     }
 }
 
+// this is the most important function it loads the data and check the types
 async function loadData(nbOfCards) {
     for (let i = 0; i < nbOfCards; i++) {
         try {
@@ -108,6 +114,8 @@ async function loadData(nbOfCards) {
         }
     }
 }
+
+// this function create each card post with their elements
 function createCards(data) {
     const div = document.createElement('div')
     div.className = 'card'
@@ -130,6 +138,7 @@ function createCards(data) {
     return div
 }
 
+// this function get the informations for each post and handle each type
 function getPostInfos(idPost) {
     divInfos.classList.remove('hidden')
     fetch(`https://hacker-news.firebaseio.com/v0/item/${idPost}.json`)
@@ -174,6 +183,7 @@ function getPostInfos(idPost) {
         })
 }
 
+// thid function fetchs the polls data like parts
 function getPollsData(idPoll) {
     if (!idPoll) {
         return ""
@@ -199,6 +209,7 @@ function getPollsData(idPoll) {
     }
 }
 
+// this function fetchs the comments of the post given 
 function getComments(idsComment) {
     if (!idsComment) {
         return ""
